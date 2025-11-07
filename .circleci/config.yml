@@ -22,4 +22,9 @@ workflows:
   version: 2
   sanctuary-check:
     jobs:
-      - vessel-builder
+      - vessel-builder:
+          filters:
+            branches:
+              only:
+                - main
+                - release/*
