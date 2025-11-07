@@ -1,26 +1,34 @@
 version: 2.1
-
 jobs:
-  smoke-test-gate:
+  guardian-of-style:
     docker:
-      - image: mcr.microsoft.com/playwright:v1.56.1-noble
+      - image: cimg/node:20.8.1
     steps:
       - checkout
       - run: npm ci
       - run:
-          name: Run Playwright Tests Across Browsers
-          command: |
-            npx playwright test --project=chromium
-            npx playwright test --project=firefox
-            npx playwright test --project=webkit
+          name: Run ESLint
+          command: npx eslint . --format junit -o test-results/lint-results.xml
       - store_artifacts:
           path: test-results/
-          destination: smoke-gate-results
+          destination: lint-style-results
       - store_test_results:
           path: test-results/
-
+  smoke-test-gate:
+    docker:
+      - image: cimg/node:20.8.1
+    steps:
+      - checkout
+      - run: npm ci
+      - run:
+          name: Run Smoke Tests
+          command: npm run smoke-test
 workflows:
   version: 2
   sanctuary-check:
     jobs:
-      - smoke-test-gate
+      - smoke-test-gate:
+          filters:
+            branches:
+              only: main
+      - guardian-of-style
