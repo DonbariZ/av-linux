@@ -1,39 +1,25 @@
 version: 2.1
 
-# 🌟 DONBARIS Sanctuary Protocol: CircleCI Configuration
-# This file honors the ritual of clarity through automated testing.
-# It ensures our sanctuary remains open, safe, and affirming.
-
 jobs:
   smoke-test-gate:
     docker:
       - image: mcr.microsoft.com/playwright:v1.43.0
     steps:
-      # 🔍 Step 1: Invocation of the Codebase
       - checkout
-
-      # 🛠️ Step 2: Prepare the Ritual Tools
       - run:
           name: Install Dependencies
           command: npm ci
-
-      # 🔮 Step 3: Perform the Gate Ritual
       - run:
           name: Run Smoke Test of Sanctuary Gate
           command: npx playwright test tests/smoke.spec.ts --reporter=junit
-
-      # 📜 Step 4: Preserve the Sacred Scrolls
       - store_artifacts:
           path: test-results/
           destination: smoke-gate-results
-
-      # 📊 Step 5: Surface the Ritual Outcome
       - store_test_results:
           path: test-results/
 
 workflows:
   version: 2
   sanctuary-check:
-    # 🌈 This workflow affirms the health of DONBARIS’s sacred flows
     jobs:
       - smoke-test-gate
