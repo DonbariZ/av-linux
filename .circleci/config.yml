@@ -3,7 +3,7 @@ version: 2.1
 jobs:
   smoke-test-gate:
     docker:
-      - image: mcr.microsoft.com/playwright:v1.43.0
+      - image: mcr.microsoft.com/playwright:v1.56.1-noble
     steps:
       - checkout
       - run: npm ci
