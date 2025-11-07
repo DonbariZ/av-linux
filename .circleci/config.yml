@@ -6,12 +6,13 @@ jobs:
       - image: mcr.microsoft.com/playwright:v1.43.0
     steps:
       - checkout
+      - run: npm ci
       - run:
-          name: Install Dependencies
-          command: npm ci
-      - run:
-          name: Run Smoke Test of Sanctuary Gate
-          command: npx playwright test tests/smoke.spec.ts --reporter=junit
+          name: Run Playwright Tests Across Browsers
+          command: |
+            npx playwright test --project=chromium
+            npx playwright test --project=firefox
+            npx playwright test --project=webkit
       - store_artifacts:
           path: test-results/
           destination: smoke-gate-results
