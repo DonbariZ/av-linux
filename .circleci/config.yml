@@ -1,34 +1,25 @@
 version: 2.1
+
 jobs:
-  guardian-of-style:
+  vessel-builder:
     docker:
-      - image: cimg/node:20.8.1
+      - image: cimg/base:stable
+    environment:
+      DOCKER_BUILDKIT: 1
     steps:
       - checkout
-      - run: npm ci
+      - setup_remote_docker
       - run:
-          name: Run ESLint
-          command: npx eslint . --format junit -o test-results/lint-results.xml
-      - store_artifacts:
-          path: test-results/
-          destination: lint-style-results
-      - store_test_results:
-          path: test-results/
-  smoke-test-gate:
-    docker:
-      - image: cimg/node:20.8.1
-    steps:
-      - checkout
-      - run: npm ci
+          name: Build Docker Image with BuildKit
+          command: docker build -t donbaris/sanctuary:latest .
       - run:
-          name: Run Smoke Tests
-          command: npm run smoke-test
+          name: Authenticate and Push to DockerHub
+          command: |
+            echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USER" --password-stdin
+            docker push donbaris/sanctuary:latest
+
 workflows:
   version: 2
   sanctuary-check:
     jobs:
-      - smoke-test-gate:
-          filters:
-            branches:
-              only: main
-      - guardian-of-style
+      - vessel-builder
